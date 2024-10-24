@@ -6,13 +6,13 @@
 /*   By: mgendrot <mgendrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 13:47:04 by mgendrot          #+#    #+#             */
-/*   Updated: 2024/10/24 11:56:58 by mgendrot         ###   ########.fr       */
+/*   Updated: 2024/10/24 17:01:38 by mgendrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-void	free_null(char **ptr)
+void	ft_free_null(char **ptr)
 {
 	if (*ptr != NULL)
 	{
@@ -58,11 +58,13 @@ char	*read_line(int fd, char **buffer, char *read_return)
 	while (nl == NULL)
 	{
 		bytes_read = read(fd, read_return, BUFFER_SIZE);
+		if (bytes_read == -1)
+			return (NULL);
 		if (bytes_read <= 0)
 			return (join_line(bytes_read, buffer));
 		read_return[bytes_read] = 0;
 		tmp = ft_strjoin(*buffer, read_return);
-		free_null(buffer);
+		ft_free_null(buffer);
 		*buffer = tmp;
 		nl = ft_strchr(*buffer, '\n');
 	}
@@ -78,11 +80,16 @@ char	*get_next_line(int fd)
 	if (fd < 0 || BUFFER_SIZE <= 0 || fd > MAX_FD)
 		return (NULL);
 	read_return = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
-	if (read_return == NULL)
+	if (!read_return)
 		return (NULL);
 	if (!buffer[fd])
 		buffer[fd] = ft_strdup("");
 	res = read_line(fd, &buffer[fd], read_return);
-	free_null(&read_return);
+	if (res == NULL)
+	{
+		ft_free_null(&read_return);
+		return (NULL);
+	}
+	ft_free_null(&read_return);
 	return (res);
 }

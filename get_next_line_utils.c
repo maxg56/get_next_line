@@ -6,66 +6,65 @@
 /*   By: mgendrot <mgendrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 13:47:08 by mgendrot          #+#    #+#             */
-/*   Updated: 2024/10/24 11:57:17 by mgendrot         ###   ########.fr       */
+/*   Updated: 2024/10/24 13:23:26 by mgendrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*ft_strchr(const char *str, int n)
+char	*ft_strchr(const char *s, int c)
 {
-	char	*tmp;
-
-	tmp = (char *) str;
-	while (*tmp != (char)n)
+	while (*s)
 	{
-		if (*tmp == 0)
-			return (NULL);
-		tmp++;
+		if (*s == (char)c)
+			return ((char *)s);
+		s++;
 	}
-	return ((char *)tmp);
+	if ((char)c == '\0')
+		return ((char *)s);
+	return (NULL);
 }
 
 size_t	ft_strlen(const char *str)
 {
-	size_t	a;
+	size_t	i;
 
-	a = 0;
-	while (str[a])
-		a++;
-	return (a);
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
 }
 
-char	*ft_strdup(const char *str)
+char	*ft_strdup(char *src)
 {
-	size_t	i;
-	size_t	len;
-	char	*s;
+	char	*copi;
+	int		i;
 
-	len = ft_strlen(str) + 1;
-	s = (char *)malloc(sizeof(char) * len);
-	if (s == NULL)
+	i = 0;
+	copi = malloc((ft_strlen(src) + 1) * sizeof(char));
+	if (!copi)
 		return (NULL);
-	i = -1;
-	while (++i < len)
-		s[i] = str[i];
-	return (s);
+	while (src[i])
+	{
+		copi[i] = src[i];
+		i++;
+	}
+	copi[i] = '\0';
+	return (copi);
 }
 
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
 	size_t	i;
-	size_t	srclen;
 	char	*str;
 
 	if (!s)
 		return (NULL);
-	srclen = ft_strlen(s);
-	if (start > srclen)
+	if (start >= ft_strlen(s))
 		return (ft_strdup(""));
-	if (start + len > srclen)
-		len = srclen - start;
-	str = (char *)malloc(sizeof(char) * len + 1);
+	if (len > ft_strlen(s) - start)
+		len = ft_strlen(s) - start;
+	str = (char *)malloc(sizeof(char) * (len + 1));
 	if (!str)
 		return (NULL);
 	i = 0;
@@ -80,23 +79,29 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 
 char	*ft_strjoin(char const *s1, char const *s2)
 {
-	char	*str;
 	int		i;
-	int		j;
-	size_t	size;
+	int		len1;
+	int		len2;
+	char	*str;
 
-	if (!s1 || !s2)
-		return (NULL);
-	size = ft_strlen(s1) + ft_strlen(s2) + 1;
-	str = (char *)malloc(sizeof(char) * size);
-	if (!str)
-		return (NULL);
-	i = -1;
-	while (s1[++i])
-		str[i] = s1[i];
-	j = -1;
-	while (s2[++j])
-		str[i + j] = s2[j];
-	str[i + j] = '\0';
-	return (str);
+	if (s1 && s2)
+	{
+		len1 = ft_strlen(s1);
+		len2 = ft_strlen(s2);
+		str = (char *)malloc(sizeof(char) * (len1 + len2 + 1));
+		if (str == NULL)
+			return (NULL);
+		i = -1;
+		while (s1[++i])
+			str[i] = s1[i];
+		i = -1;
+		while (s2[++i])
+		{
+			str[len1] = s2[i];
+			len1++;
+		}
+		str[len1] = '\0';
+		return (str);
+	}
+	return (NULL);
 }

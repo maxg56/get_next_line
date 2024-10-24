@@ -1,39 +1,37 @@
 
-SCRS		=  get_next_line_utils.c  get_next_line.c
+SCRS		=  get_next_line_utils.c  get_next_line.c main.c
 
-OBJS		= ${SCRS:.c=.o}
+OBJDIR		= obj
+OBJS		= $(addprefix $(OBJDIR)/, $(SCRS:.c=.o))
 
-BONUS		= 
-
-BONUS_OBJS	= ${BONUS:.c=.o}
-
-NAME		= get_next_line.aut
+NAME		= get_next_line
 
 NAMETESTS	= tests.out	
 
 CC			= cc 
+
 CFLAGS		= -Wall -Wextra -Werror -D UFFER_SIZE=42
+
+RM			= rm -f
+MKDIR		= mkdir
 
 all:		${NAME}
 
-%.o: %.c
-			${CC} ${CFLAGS} -c $< -o $@ -I libft.h
+$(OBJDIR):
+			${MKDIR} $(OBJDIR)  
 
+$(OBJDIR)/%.o: %.c | $(OBJDIR)
+			${CC} ${CFLAGS} -c $< -o $@
+
+${NAME}:	${OBJS}
+			${CC} ${CFLAGS} -o ${NAME} ${OBJS}
 
 clean:
-			rm -f ${OBJS} ${BONUS_OBJS}
+			${RM} ${OBJS}
 
 fclean:		clean
-			rm -f ${NAME}
+			${RM} ${NAME}
 
 re:			fclean all
 
-bonus :		$(OBJS) $(BONUS_OBJS)
-			ar rcs $(NAME) $^
-
-tests:		all
-			${CC} ${CFLAGS} .tests.c -L . -l ft  -o ${NAMETESTS}
-			./${NAMETESTS}
-			rm -f ${NAMETESTS}
-			
-.PHONY:		all clean fclean re bonus tests 
+.PHONY:		all clean fclean re

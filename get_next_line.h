@@ -6,7 +6,7 @@
 /*   By: mgendrot <mgendrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 13:47:12 by mgendrot          #+#    #+#             */
-/*   Updated: 2024/10/24 13:30:11 by mgendrot         ###   ########.fr       */
+/*   Updated: 2024/10/28 09:27:16 by mgendrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 # include <unistd.h>
 # include <stdlib.h>
+# include <sys/types.h>
+# include <sys/uio.h>
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 1
@@ -28,6 +30,6 @@ char	*get_next_line(int fd);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strchr(const char *str, int n);
 size_t	ft_strlen(const char *str);
-char	*ft_strdup(char *str);
+char	*ft_strdup(const char *str);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 #endif

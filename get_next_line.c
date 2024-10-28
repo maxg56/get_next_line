@@ -6,7 +6,7 @@
 /*   By: mgendrot <mgendrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 13:47:04 by mgendrot          #+#    #+#             */
-/*   Updated: 2024/10/28 09:23:19 by mgendrot         ###   ########.fr       */
+/*   Updated: 2024/10/28 12:52:44 by mgendrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ char	*get_next_line(int fd)
 	char		*read_return;
 	char		*res;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || fd > MAX_FD)
+	if (fd < 0 || BUFFER_SIZE <= 0 || fd > MAX_FD )
 		return (NULL);
 	read_return = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
 	if (read_return == NULL)

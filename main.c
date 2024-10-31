@@ -6,7 +6,7 @@
 /*   By: mgendrot <mgendrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 15:03:18 by mgendrot          #+#    #+#             */
-/*   Updated: 2024/10/28 10:14:44 by mgendrot         ###   ########.fr       */
+/*   Updated: 2024/10/31 13:51:51 by mgendrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,11 @@ char	*tsts(int fpointer, char *singleLine)
 
 int	main(void)
 {
-	int		fpointer;
+	int		fd;
 	char	*singleLine;
 
 	singleLine = malloc(1 * sizeof(char));
-	fpointer = open("tests/.txt", MAX_FD);
+	fd = open("tests/ts.txt", MAX_FD);
 	/*
 	while (singleLine != NULL)
 	{
@@ -57,7 +57,10 @@ int	main(void)
 		printf("%s", singleLine);
 	}
 	*/
-	singleLine = tsts(fpointer, singleLine);
+	singleLine = tsts(fd, singleLine);
+	//fd = open("tests/read_error.txt", MAX_FD);
+	//singleLine = tsts(fd, singleLine);
 	free(singleLine);
+	close(fd);
 	return (0);
 }

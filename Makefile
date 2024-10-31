@@ -11,7 +11,7 @@ NAMETESTS	= tests.out
 CC			= cc 
 
 UFFER_SIZE  = 10
-CFLAGS		= -Wall -Wextra -Werror -D UFFER_SIZE=${UFFER_SIZE}
+CFLAGS		= -Wall -Wextra -Werror -g -D UFFER_SIZE=${UFFER_SIZE}
 
 RM			= rm -f
 MKDIR		= mkdir

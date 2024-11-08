@@ -3,143 +3,77 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: etaquet <etaquet@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mgendrot <mgendrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 13:43:11 by etaquet           #+#    #+#             */
-/*   Updated: 2024/10/24 11:15:58 by etaquet          ###   ########.fr       */
+/*   Updated: 2024/11/06 15:30:55 by mgendrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
-#include <stdio.h>
+#include "get_next_line.h"	
 
-char	*ft_strjoin(const char *s1, const char *s2)
+static char	*function_name(int fd, char *buf, char *backup)
 {
-	int		len1;
-	int		len2;
-	int		i;
-	char	*result;
+	int		read_line;
+	char	*char_temp;
 
-	if (!s1 || !s2)
-		return (NULL);
-	len1 = 0;
-	len2 = 0;
-	i = 0;
-	while (s1[len1] != '\0')
-		len1++;
-	while (s2[len2] != '\0')
-		len2++;
-	result = malloc(sizeof(char) * (len1 + len2 + 1));
-	if (!result)
-		return (NULL);
-	i--;
-	while (++i < len1)
-		result[i] = s1[i];
-	i--;
-	while (++i < len1 + len2)
-		result[i] = s2[i - len1];
-	result[i] = '\0';
-	return (result);
-}
-
-char	*get_leftover_if_no_newline(char **leftover)
-{
-	char	*temp2;
-
-	if (ft_strlen(*leftover) > 0)
+	read_line = 1;
+	while (read_line != '\0')
 	{
-		temp2 = ft_strdup(*leftover);
-		free(*leftover);
-		*leftover = NULL;
-		return (temp2);
-	}
-	return (NULL);
-}
-
-int	read_from_fd(int fd, char **leftover, char *buff)
-{
-	int		ret;
-	char	*temp;
-	size_t	start;
-
-	ret = BUFFER_SIZE;
-	if (!leftover)
-		return (0);
-	while (ft_strchr(*leftover, '\n') == 0 && ret == BUFFER_SIZE)
-	{
-		start = 0;
-		while (start < BUFFER_SIZE + 1)
-			((char *) buff)[start++] = 0;
-		ret = read(fd, buff, BUFFER_SIZE);
-		if (ret <= 0)
+		read_line = read(fd, buf, BUFFER_SIZE);
+		if (read_line == -1)
+			return (0);
+		else if (read_line == 0)
 			break ;
-		temp = ft_strjoin(*leftover, buff);
-		free(*leftover);
-		*leftover = temp;
+		buf[read_line] = '\0';
+		if (!backup)
+			backup = ft_strdup("");
+		char_temp = backup;
+		backup = ft_strjoin(char_temp, buf);
+		free(char_temp);
+		char_temp = NULL;
+		if (ft_strchr (buf, '\n'))
+			break ;
 	}
-	return (ret);
+	return (backup);
 }
 
-char	*get_line_from_leftover(char **leftover)
+static char	*extract(char *line)
 {
-	char	*temp;
-	char	*temp2;
-	size_t	len;
-	char	*old_leftover;
+	size_t	count;
+	char	*backup;
 
-	if (ft_strchr(*leftover, '\n') != NULL)
+	count = 0;
+	while (line[count] != '\n' && line[count] != '\0')
+		count++;
+	if (line[count] == '\0' || line[1] == '\0')
+		return (0);
+	backup = ft_substr(line, count + 1, ft_strlen(line) - count);
+	if (*backup == '\0')
 	{
-		temp = ft_strchr(*leftover, '\n');
-		len = temp - *leftover + 1;
-		temp2 = ft_substr(*leftover, 0, len);
-		old_leftover = *leftover;
-		*leftover = ft_substr(*leftover, len, ft_strlen(*leftover) - len);
-		free(old_leftover);
-		return (temp2);
+		free(backup);
+		backup = NULL;
 	}
-	return (NULL);
+	line[count + 1] = '\0';
+	return (backup);
 }
 
 char	*get_next_line(int fd)
 {
-	char		*buff;
-	static char	*leftover = NULL;
-	char		*temp2;
+	char		*line;
+	char		*buf;
+	static char	*backup;
 
-	malloc_gnl(&leftover, &buff, 1);
-	temp2 = get_line_from_leftover(&leftover);
-	if (temp2)
-		return (temp2);
-	buff = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (!buff)
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (0);
+	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (!buf)
+		return (0);
+	line = function_name(fd, buf, backup);
+	free(buf);
+	buf = NULL;
+	if (!line)
 		return (NULL);
-	if (read_from_fd(fd, &leftover, buff) < 0)
-		return (malloc_gnl(&leftover, &buff, 2), NULL);
-	free(buff);
-	temp2 = get_line_from_leftover(&leftover);
-	if (temp2)
-		return (temp2);
-	temp2 = get_leftover_if_no_newline(&leftover);
-	if (!ft_strlen(leftover))
-	{
-		free(leftover);
-		leftover = 0;
-	}
-	return (temp2);
+	backup = extract(line);
+	return (line);
 }
-
-/* int	main(int argc, char **argv)
-{
-	(void)argc;
-	int fd = open("test", O_RDONLY);
-	char *temp;
-
-	temp = get_next_line(fd);
-	//{
-	dprintf(1, "%s", temp);
-	free(temp);
-	//}
-	//free(temp);
-	close(fd);
-	return 0;
-} */
